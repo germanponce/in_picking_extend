@@ -25,6 +25,9 @@ class stock_move(osv.osv):
     _defaults = {
         }
 
+    def total_price(self, price, qty):
+        return price*qty
+
     def onchange_product_id(self, cr, uid, ids, prod_id=False, loc_id=False,
                             loc_dest_id=False, partner_id=False):
         """ On change of product id, if finds UoM, UoS, quantity and UoS quantity.
