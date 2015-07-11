@@ -2,6 +2,22 @@
 <data>
 
         <!--======================FORM VIEW =======================-->
+
+        <record model="ir.ui.view" id="inhrt_stock_pickings_form_viewss">
+            <field name="name">inherit.stock.picking.form.view</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+            <data>
+                <xpath expr="//field[@name='pack_operation_ids']/tree/field[@name='lot_id']" position="after">
+                    <field name="list_price" />
+                    <field name="list_price_client" />
+                </xpath>
+            </data>
+            </field>
+        </record>
+
     <record id="herencia_stock_product_in" model="ir.ui.view">
         <field name="name">stock.product.ncm</field>
         <field name="model">stock.move</field>
@@ -150,9 +166,11 @@
                       <thead>
                         <tr>
                             <th><strong>Product</strong></th>
-                            <!-- <th><strong>Precio Publico</strong></th>
-                            <th><strong>Precio Cliente</strong></th> -->
+                            <th><strong class="text-center">Precio Publico</strong></th>
+                            <th><strong class="text-center">Precio Cliente</strong></th>
                             <th class="text-right"><strong>Quantity</strong></th>
+                            <th><strong class="text-center">Total Publico</strong></th>
+                            <th><strong class="text-center">Total Cliente</strong></th>
                             <t t-if="o.picking_type_id.code != 'incoming'"><th><strong>Source</strong></th></t>
                             <th><strong>Barcode</strong></th>
                             <t t-if="o.picking_type_id.code != 'outgoing'"><th><strong>Destination</strong></th></t>
@@ -162,10 +180,12 @@
                         <tr t-foreach="o.pack_operation_ids" t-as="pack_operation">
                             <td><span t-field="pack_operation.product_id"/>
                                 <t t-if="not pack_operation.product_id and pack_operation.package_id"><span t-field="pack_operation.package_id"/></t></td>
-                            <!-- <td class="text-right"><span t-field="pack_operation.list_price"/> <span t-field="pack_operation.list_price" /></td>
-                            <td class="text-right"><span t-field="pack_operation.list_price_client"/> <span t-field="pack_operation.list_price_client" /></td> -->
+                            <td class="text-center"><span t-field="pack_operation.list_price"/></td>
+                            <td class="text-center"><span t-field="pack_operation.list_price_client"/> </td>
 
                             <td class="text-right"><span t-field="pack_operation.product_qty"/> <span t-field="pack_operation.product_uom_id" groups="product.group_uom"/></td>
+                            <td class="text-center"><span t-if="pack_operation.list_price" t-esc="pack_operation.total_price(pack_operation.list_price,pack_operation.product_qty)"/> </td>
+                            <td class="text-center"><span t-if="pack_operation.list_price_client" t-esc="pack_operation.total_price(pack_operation.list_price_client,pack_operation.product_qty)"/> </td>
                             <t t-if="o.picking_type_id.code != 'incoming'"><td><span t-field="pack_operation.location_id"/>
                                 <span t-if="pack_operation.package_id">:</span>
                                 <span t-field="pack_operation.package_id"/>
