@@ -211,6 +211,48 @@
                         </tr>
                       </tbody>
                     </table>
+            <div class="row">
+                <div class="col-xs-4 pull-right">
+                    <table class="table table-condensed">
+                        <tr class="border-black">
+                            <td><strong>Total Publico: </strong></td>
+                            <td class="text-right">
+                                <span t-field="o.total_price_global" />
+                            </td>
+                        </tr>
+                        <tr class="border-black">
+                            <td><strong>Total Cliente:</strong></td>
+                            <td class="text-right">
+                                <span t-field="o.total_price_client_global"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black">
+                            <td><strong>Cantidad Total:</strong></td>
+                            <td class="text-right">
+                                 <span t-field="o.qty_total" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+<!--                     <table border="0" style="border-collapse:collapse;color:000000;width:100%" cellpadding="3" cellspacing="3">
+                        <tr >
+                            <td class="text-left"  >
+                               <p alig="left">
+                               <strong>Total Publico: </strong><br/>
+                               <strong>Total Cliente: </strong><br/>
+                               <strong>Cantidad Total: </strong>
+                                </p>
+                            </td>
+                            <td class="text-right"  >
+                               <p alig="left">
+                               <span t-field="o.total_price_global"/><br/>
+                               <span t-field="o.total_price_client_global"/><br/>
+                               <span t-field="o.qty_total"/>
+                                </p>
+                            </td>
+                        </tr>
+                    </table> -->
                     <br/>
                     <br/>
                     <br/>

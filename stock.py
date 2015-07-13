@@ -28,6 +28,21 @@ class stock_pack_operation(osv.osv):
     def total_price(self, price, qty):
         return price*qty
 
+    def total_price_global(self, moves):
+        total_price = 0.0
+        for line in moves:
+            total = line.list_price*line.product_qty
+            total_price += total
+        return 
+
+    def total_price_client_global(self, moves):
+        total_price_client = 0.0
+        for line in moves:
+            total = line.list_price_client*line.product_qty
+            total_price_client += total
+        return 
+
+
     def create(self, cr, uid, vals, context=None):
         context = context or {}
         res_id = super(stock_pack_operation, self).create(cr, uid, vals, context=context)
@@ -54,6 +69,20 @@ class stock_move(osv.osv):
 
     def total_price(self, price, qty):
         return price*qty
+
+    def total_price_global(self, moves):
+        total_price = 0.0
+        for line in moves:
+            total = line.list_price*line.product_uom_qty
+            total_price += total
+        return 
+
+    def total_price_client_global(self, moves):
+        total_price_client = 0.0
+        for line in moves:
+            total = line.list_price_client*line.product_uom_qty
+            total_price_client += total
+        return 
 
     def onchange_product_id(self, cr, uid, ids, prod_id=False, loc_id=False,
                             loc_dest_id=False, partner_id=False):
@@ -91,6 +120,47 @@ class stock_move(osv.osv):
         if loc_dest_id:
             result['location_dest_id'] = loc_dest_id
         return {'value': result}
+
+class stock_picking(osv.osv):
+    _name = 'stock.picking'
+    _inherit ='stock.picking'
+
+    def _amount(self, cr, uid, ids, field_name, args, context=None):
+        res = {}
+        for record in self.browse(cr, uid, ids, context=context):          
+            total_price_global = 0.0
+            total_price_client_global = 0.0
+            qty_total = 0.0
+            if record.pack_operation_ids:
+                for line in record.move_lines:
+                    total = line.list_price*line.product_qty
+                    total2 = line.list_price_client*line.product_qty
+                    total_price_global += total
+                    total_price_client_global += total2
+                    qty_total += line.product_qty
+            else:
+                for line in record.move_lines:
+                    total = line.list_price*line.product_uom_qty
+                    total2 = line.list_price_client*line.product_uom_qty
+                    total_price_global += total
+                    total_price_client_global += total2
+                    qty_total += line.product_uom_qty
+            res[record.id] =   {
+                            'total_price_global'  :   total_price_global,
+                            'total_price_client_global':   total_price_client_global,
+                            'qty_total': qty_total,
+                    }
+        return res
+
+    _columns = {
+        'total_price_global'      : fields.function(_amount, method=True, string='Total Publico', type='float', digits=(14,2), multi=True, store=True),
+        'total_price_client_global'    : fields.function(_amount, method=True, string='Total Cliente', type='float', digits=(14,2), multi=True, store=True),
+        'qty_total'    : fields.function(_amount, method=True, string='Cantidad Total', type='float', digits=(14,2), multi=True, store=True),
+        }
+
+    _defaults = {
+        }
+
 
 # class report_stock_picking(osv.osv):
 #     _name = 'report.stock.picking'
